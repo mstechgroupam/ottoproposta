@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Ambientes virtuais
+venv/
+env/
+.venv/
+.env
+
+# Flask
+instance/
+flask.log
+*.log
+
+# PDFs de teste
+test_proposta.pdf
+teste_proposta.pdf
+
+# Arquivo de lock desnecessário
+prpm.lock
+nul
+
+# Imagens extraídas do PDF original (não usadas)
+static/img/logo_extracted_*
+static/img/p??_img*
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/
+
+# Fontes (grandes, podem ser obtidas do matplotlib)
+# static/fonts/  ← manter para facilitar deploy

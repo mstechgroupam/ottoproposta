@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Proposta — Otto Energia Solar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'otto-azul':    '#1B3A6B',
+            'otto-laranja': '#F7941D',
+            'otto-verde':   '#4CAF50',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .input-base {
+      @apply mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
+             focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent
+             transition;
+    }
+    label { @apply block text-sm font-medium text-gray-600 mt-3; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+
+  <!-- NAVBAR -->
+  <nav class="bg-otto-azul text-white px-6 py-3 flex items-center gap-4 shadow-lg sticky top-0 z-50">
+    <div class="w-8 h-8 bg-otto-laranja rounded-full flex items-center justify-center font-bold text-sm">O</div>
+    <h1 class="text-lg font-bold tracking-wide">Otto Energia Solar — Gerador de Propostas</h1>
+  </nav>
+
+  <div class="max-w-4xl mx-auto py-8 px-4">
+
+    <form method="POST" action="/gerar-pdf" id="main-form" class="space-y-6">
+
+      <!-- ── SEÇÃO 1: DADOS DA PROPOSTA ─────────────────────────────── -->
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-otto-azul text-white px-6 py-3 font-bold text-sm tracking-wide">
+          📋 DADOS DA PROPOSTA
+        </div>
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label>Número da Proposta *</label>
+            <input type="text" name="numero" required
+                   value="{{ defaults.get('numero', '001') }}"
+                   placeholder="001"
+                   class="input-base mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div>
+            <label>Data de Emissão *</label>
+            <input type="date" name="data_emissao" required
+                   value="{{ defaults.get('data_emissao', '') }}"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div>
+            <label>Validade da Proposta *</label>
+            <input type="date" name="data_validade" required
+                   value="{{ defaults.get('data_validade', '') }}"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SEÇÃO 2: DADOS DO CLIENTE ──────────────────────────────── -->
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-otto-azul text-white px-6 py-3 font-bold text-sm tracking-wide">
+          👤 DADOS DO CLIENTE
+        </div>
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label>Nome Completo / Razão Social *</label>
+            <input type="text" name="nome_cliente" required
+                   placeholder="Ex: JOÃO SILVA SANTOS"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div class="sm:col-span-2">
+            <label>Endereço Completo</label>
+            <input type="text" name="endereco"
+                   placeholder="Rua, número, bairro, cidade - UF, CEP"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div>
+            <label>Telefone</label>
+            <input type="tel" name="telefone"
+                   placeholder="(92) 99999-9999"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div>
+            <label>E-mail</label>
+            <input type="email" name="email"
+                   placeholder="cliente@email.com"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+          <div>
+            <label>Tipo de Cliente</label>
+            <select name="tipo_cliente"
+                    class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white">
+              <option value="Residencial">Residencial</option>
+              <option value="Comercial">Comercial</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Rural">Rural</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SEÇÃO 3: ESPECIFICAÇÕES TÉCNICAS ───────────────────────── -->
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-otto-verde text-white px-6 py-3 font-bold text-sm tracking-wide">
+          ⚡ ESPECIFICAÇÕES TÉCNICAS DO SISTEMA
+        </div>
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label>Consumo Médio Mensal (kWh/mês) *</label>
+            <input type="number" name="consumo_kwh" required
+                   step="1" min="0" placeholder="1400"
+                   oninput="calcularPreview()"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+          </div>
+          <div>
+            <label>Potência do Sistema (kWp) *</label>
+            <input type="number" name="potencia_kwp" id="potencia_kwp" required
+                   step="0.01" min="0" placeholder="18.6"
+                   oninput="calcularPreview()"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+          </div>
+          <div>
+            <label>Quantidade de Painéis</label>
+            <input type="number" name="qtd_paineis"
+                   step="1" min="1" placeholder="28"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+          </div>
+          <div>
+            <label>Modelo do Painel Solar</label>
+            <input type="text" name="modelo_painel"
+                   placeholder="Ex: Canadian Solar 665W Mono"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+          </div>
+          <div>
+            <label>Modelo do Inversor</label>
+            <input type="text" name="modelo_inversor"
+                   placeholder="Ex: Growatt 15kW"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SEÇÃO 4: DADOS FINANCEIROS ─────────────────────────────── -->
+      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-otto-laranja text-white px-6 py-3 font-bold text-sm tracking-wide">
+          💰 INVESTIMENTO E RETORNO
+        </div>
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label>Investimento Total (R$) *</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm mt-0.5">R$</span>
+              <input type="number" name="investimento_total" id="investimento_total" required
+                     step="0.01" min="0" placeholder="27000.00"
+                     oninput="calcularPreview()"
+                     class="mt-1 w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+          </div>
+          <div>
+            <label>Economia Mensal Estimada (R$) *</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm mt-0.5">R$</span>
+              <input type="number" name="economia_mensal" id="economia_mensal" required
+                     step="0.01" min="0" placeholder="1400.00"
+                     oninput="calcularPreview()"
+                     class="mt-1 w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+          </div>
+          <div>
+            <label>Payback — Tempo de Retorno (meses) *</label>
+            <input type="number" name="payback_meses" required
+                   step="1" min="1" placeholder="36"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          </div>
+          <div>
+            <label>Forma de Pagamento</label>
+            <input type="text" name="forma_pagamento"
+                   placeholder="Ex: À vista / 3x no cartão + financiamento"
+                   class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          </div>
+        </div>
+      </section>
+
+      <!-- ── PREVIEW CALCULADO ──────────────────────────────────────── -->
+      <section id="preview-section"
+               class="bg-green-50 rounded-2xl border border-green-200 p-6 hidden transition-all">
+        <h3 class="text-green-700 font-bold text-sm mb-4 uppercase tracking-wide">
+          📊 Preview — Impacto Ambiental e Projeção (Calculado Automaticamente)
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+          <div class="bg-white rounded-xl p-3 text-center border border-green-100">
+            <p class="text-2xl font-bold text-green-600" id="prev-geracao">—</p>
+            <p class="text-xs text-gray-500 mt-1">kWh gerados/ano</p>
+          </div>
+          <div class="bg-white rounded-xl p-3 text-center border border-green-100">
+            <p class="text-2xl font-bold text-green-600" id="prev-co2">—</p>
+            <p class="text-xs text-gray-500 mt-1">ton. CO₂ evitadas/ano</p>
+          </div>
+          <div class="bg-white rounded-xl p-3 text-center border border-green-100">
+            <p class="text-2xl font-bold text-green-600" id="prev-arvores">—</p>
+            <p class="text-xs text-gray-500 mt-1">árvores equivalentes</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-white rounded-lg p-2 text-center border border-blue-100">
+            <p class="text-xs text-gray-400">1 Ano</p>
+            <p class="font-bold text-blue-700 text-sm" id="prev-1">—</p>
+          </div>
+          <div class="bg-white rounded-lg p-2 text-center border border-blue-100">
+            <p class="text-xs text-gray-400">5 Anos</p>
+            <p class="font-bold text-blue-700 text-sm" id="prev-5">—</p>
+          </div>
+          <div class="bg-white rounded-lg p-2 text-center border border-blue-100">
+            <p class="text-xs text-gray-400">10 Anos</p>
+            <p class="font-bold text-blue-700 text-sm" id="prev-10">—</p>
+          </div>
+          <div class="bg-white rounded-lg p-2 text-center border border-blue-100">
+            <p class="text-xs text-gray-400">25 Anos</p>
+            <p class="font-bold text-blue-700 text-sm" id="prev-25">—</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── BOTÃO GERAR ─────────────────────────────────────────────── -->
+      <div class="flex flex-col sm:flex-row justify-end gap-3 pt-2">
+        <button type="button" onclick="calcularPreview()"
+                class="px-6 py-3 rounded-xl border border-otto-verde text-otto-verde font-semibold text-sm hover:bg-green-50 transition">
+          Calcular Preview
+        </button>
+        <button type="submit" id="btn-gerar"
+                class="bg-otto-azul hover:bg-blue-900 text-white font-bold py-3 px-10
+                       rounded-xl text-base shadow-lg transition flex items-center gap-2">
+          <span id="btn-text">⬇ Gerar Proposta PDF</span>
+          <span id="btn-loading" class="hidden">Gerando...</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ── JAVASCRIPT ─────────────────────────────────────────────────── -->
+  <script>
+    let debounceTimer = null;
+
+    function calcularPreview() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(_doCalc, 300);
+    }
+
+    function _doCalc() {
+      const kwp = parseFloat(document.querySelector('[name="potencia_kwp"]').value) || 0;
+      const eco = parseFloat(document.querySelector('[name="economia_mensal"]').value) || 0;
+      const inv = parseFloat(document.querySelector('[name="investimento_total"]').value) || 0;
+
+      if (kwp <= 0 && eco <= 0) return;
+
+      const fd = new FormData();
+      fd.append('potencia_kwp', kwp);
+      fd.append('economia_mensal', eco);
+      fd.append('investimento_total', inv);
+
+      fetch('/calcular', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+          if (data.error) return;
+          document.getElementById('prev-geracao').textContent =
+            parseInt(data.geracao_kwh_ano).toLocaleString('pt-BR');
+          document.getElementById('prev-co2').textContent =
+            parseFloat(data.co2_ano).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+          document.getElementById('prev-arvores').textContent =
+            parseInt(data.arvores).toLocaleString('pt-BR');
+          document.getElementById('prev-1').textContent  = data.projecao_1;
+          document.getElementById('prev-5').textContent  = data.projecao_5;
+          document.getElementById('prev-10').textContent = data.projecao_10;
+          document.getElementById('prev-25').textContent = data.projecao_25;
+          document.getElementById('preview-section').classList.remove('hidden');
+        })
+        .catch(() => {});
+    }
+
+    // Loading state no botão
+    document.getElementById('main-form').addEventListener('submit', () => {
+      const btn = document.getElementById('btn-gerar');
+      document.getElementById('btn-text').classList.add('hidden');
+      document.getElementById('btn-loading').classList.remove('hidden');
+      btn.disabled = true;
+      btn.classList.add('opacity-70', 'cursor-not-allowed');
+      // Re-habilita após 8s como fallback
+      setTimeout(() => {
+        document.getElementById('btn-text').classList.remove('hidden');
+        document.getElementById('btn-loading').classList.add('hidden');
+        btn.disabled = false;
+        btn.classList.remove('opacity-70', 'cursor-not-allowed');
+      }, 8000);
+    });
+  </script>
+</body>
+</html>
